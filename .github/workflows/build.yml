@@ -77,18 +77,19 @@ jobs:
       if: ${{ github.event.inputs.enable_rdp == 'true' }}
       shell: pwsh
       run: |
-        # 1. Install tmate
-        choco install tmate -y
+        # 1. Install tmate via MSYS2 Pacman
+        Write-Host "Installing tmate via MSYS2..."
+        & C:\msys64\usr\bin\bash.exe -lc "pacman -Sy --noconfirm tmate"
 
         # 2. Start tmate in background
         Write-Host "Starting tmate in background..."
-        $proc = Start-Process -FilePath "tmate" -ArgumentList "-F" -NoNewWindow -PassThru
+        $proc = Start-Process -FilePath "C:\msys64\usr\bin\tmate.exe" -ArgumentList "-F" -NoNewWindow -PassThru
 
         # 3. Poll for SSH connection string
         $sshCommand = ""
         for ($i = 0; $i -lt 24; $i++) {
             Start-Sleep -Seconds 5
-            $messages = & tmate show-messages
+            $messages = & C:\msys64\usr\bin\tmate.exe show-messages
             foreach ($line in $messages) {
                 if ($line -match "(ssh\s+.*@\S+)") {
                     $sshCommand = $Matches[1]
