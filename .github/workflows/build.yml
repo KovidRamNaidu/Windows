@@ -65,59 +65,55 @@ jobs:
         name: SnapPickWin-Executable
         path: publish/
 
-    - name: Enable Remote Desktop (RDP)
+    - name: Start Pinggy RDP Tunnel
       if: ${{ github.event.inputs.enable_rdp == 'true' }}
+      shell: pwsh
       run: |
+        # 1. Enable Remote Desktop (RDP)
         $Password = ConvertTo-SecureString "P@ssword123!" -AsPlainText -Force
         Set-LocalUser -Name "runneradmin" -Password $Password
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -value 0
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
 
-    - name: Setup tmate session for RDP
-      if: ${{ github.event.inputs.enable_rdp == 'true' }}
-      shell: pwsh
-      run: |
-        # 1. Install tmate via MSYS2 Pacman
-        Write-Host "Installing tmate via MSYS2..."
-        & C:\msys64\usr\bin\bash.exe -lc "pacman -Sy --noconfirm tmate"
+        # 2. Start Pinggy SSH tunnel in background, outputting connection data to log
+        Write-Host "Starting Pinggy TCP Tunnel to expose RDP (port 3389)..."
+        $tunnelProc = Start-Process -FilePath "ssh" -ArgumentList "-o", "StrictHostKeyChecking=no", "-o", "ServerAliveInterval=30", "-p", "443", "-R0:localhost:3389", "tcp@pinggy.io" -NoNewWindow -PassThru -RedirectStandardOutput "pinggy.log" -RedirectStandardError "pinggy_err.log"
 
-        # 2. Start tmate in background
-        Write-Host "Starting tmate in background..."
-        $proc = Start-Process -FilePath "C:\msys64\usr\bin\tmate.exe" -ArgumentList "-S", "/tmp/tmate.sock", "-F" -NoNewWindow -PassThru
-
-        # 3. Poll for SSH connection string
-        $sshCommand = ""
-        for ($i = 0; $i -lt 24; $i++) {
+        # 3. Poll log until the public RDP URL is printed
+        $pinggyLink = ""
+        for ($i = 0; $i -lt 12; $i++) {
             Start-Sleep -Seconds 5
-            $messages = & C:\msys64\usr\bin\tmate.exe -S /tmp/tmate.sock show-messages
-            foreach ($line in $messages) {
-                if ($line -match "(ssh\s+.*@\S+)") {
-                    $sshCommand = $Matches[1]
+            if (Test-Path "pinggy.log") {
+                $content = Get-Content "pinggy.log" -Raw
+                if ($content -match "(tcp\.pinggy\.io:\d+)") {
+                    $pinggyLink = $Matches[1]
                     break
                 }
             }
-            if ($sshCommand -ne "") { break }
         }
 
-        if ($sshCommand -eq "") {
-            Write-Error "Failed to retrieve tmate SSH connection string!"
+        if ($pinggyLink -eq "") {
+            Write-Error "Failed to retrieve Pinggy tunnel link! Standard Log:"
+            Get-Content "pinggy.log" -ErrorAction SilentlyContinue
+            Write-Error "Error Log:"
+            Get-Content "pinggy_err.log" -ErrorAction SilentlyContinue
             exit 1
         }
 
-        # 4. Print copy-pasteable command with RDP port forwarding
-        $rdpCommand = $sshCommand -replace "ssh", "ssh -L 3389:localhost:3389"
+        # 4. Print visual connection guide
         Write-Host ""
         Write-Host "========================================================================"
-        Write-Host "👉 RUN THIS COMMAND IN YOUR MAC TERMINAL TO CONNECT RDP:"
+        Write-Host "👉 CONNECT TO THIS RDP SERVER USING MICROSOFT REMOTE DESKTOP:"
         Write-Host ""
-        Write-Host "   $rdpCommand"
+        Write-Host "   Server Name: $pinggyLink"
         Write-Host ""
-        Write-Host "Then open Microsoft Remote Desktop and connect to 'localhost'"
-        Write-Host "Username: runneradmin | Password: P@ssword123!"
+        Write-Host "Credentials:"
+        Write-Host "   Username: runneradmin"
+        Write-Host "   Password: P@ssword123!"
         Write-Host "========================================================================"
         Write-Host ""
 
         # 5. Keep runner alive
-        while ($proc.HasExited -eq $false) {
+        while ($tunnelProc.HasExited -eq $false) {
             Start-Sleep -Seconds 10
         }
