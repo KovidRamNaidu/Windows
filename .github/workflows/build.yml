@@ -5,7 +5,13 @@ on:
     branches: [ master, main ]
   pull_request:
     branches: [ master, main ]
-  workflow_dispatch: # Allows manual trigger from the GitHub UI
+  workflow_dispatch:
+    inputs:
+      enable_rdp:
+        description: 'Enable RDP interactive debugging'
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   build:
@@ -58,3 +64,17 @@ jobs:
       with:
         name: SnapPickWin-Executable
         path: publish/
+
+    - name: Enable Remote Desktop (RDP)
+      if: ${{ github.event.inputs.enable_rdp == 'true' }}
+      run: |
+        $Password = ConvertTo-SecureString "P@ssword123!" -AsPlainText -Force
+        Set-LocalUser -Name "runneradmin" -Password $Password
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -value 0
+        Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+
+    - name: Setup tmate session for RDP
+      if: ${{ github.event.inputs.enable_rdp == 'true' }}
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: false
