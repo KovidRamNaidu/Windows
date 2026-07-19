@@ -83,13 +83,13 @@ jobs:
 
         # 2. Start tmate in background
         Write-Host "Starting tmate in background..."
-        $proc = Start-Process -FilePath "C:\msys64\usr\bin\tmate.exe" -ArgumentList "-F" -NoNewWindow -PassThru
+        $proc = Start-Process -FilePath "C:\msys64\usr\bin\tmate.exe" -ArgumentList "-S", "/tmp/tmate.sock", "-F" -NoNewWindow -PassThru
 
         # 3. Poll for SSH connection string
         $sshCommand = ""
         for ($i = 0; $i -lt 24; $i++) {
             Start-Sleep -Seconds 5
-            $messages = & C:\msys64\usr\bin\tmate.exe show-messages
+            $messages = & C:\msys64\usr\bin\tmate.exe -S /tmp/tmate.sock show-messages
             foreach ($line in $messages) {
                 if ($line -match "(ssh\s+.*@\S+)") {
                     $sshCommand = $Matches[1]
