@@ -20,9 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="GoogleService-Info.plist">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="GoogleService-Info.plist" />
   </ItemGroup>
 
 </Project>

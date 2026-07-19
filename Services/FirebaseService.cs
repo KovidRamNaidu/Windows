@@ -38,18 +38,53 @@ namespace SnapPickWin.Services
 
         public void LoadConfigFromPlist()
         {
-            string plistPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GoogleService-Info.plist");
-            if (!File.Exists(plistPath))
+            XDocument? doc = null;
+
+            // 1. Try loading from Assembly Embedded Resource
+            try
             {
-                // Fallback to project root for development
-                plistPath = Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory)?.Parent?.Parent?.Parent?.FullName ?? "", "GoogleService-Info.plist");
+                var assembly = typeof(FirebaseService).Assembly;
+                using (Stream? stream = assembly.GetManifestResourceStream("SnapPickWin.GoogleService-Info.plist"))
+                {
+                    if (stream != null)
+                    {
+                        doc = XDocument.Load(stream);
+                        Console.WriteLine("🔑 FirebaseService: Config successfully loaded from embedded resource.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"⚠️ FirebaseService: Failed loading embedded plist: {ex.Message}");
             }
 
-            if (File.Exists(plistPath))
+            // 2. Fall back to local filesystem if embedded loading didn't succeed
+            if (doc == null)
+            {
+                string plistPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "GoogleService-Info.plist");
+                if (!File.Exists(plistPath))
+                {
+                    plistPath = Path.Combine(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory)?.Parent?.Parent?.Parent?.FullName ?? "", "GoogleService-Info.plist");
+                }
+
+                if (File.Exists(plistPath))
+                {
+                    try
+                    {
+                        doc = XDocument.Load(plistPath);
+                        Console.WriteLine($"🔑 FirebaseService: Config loaded from filesystem: {plistPath}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"❌ FirebaseService: Error parsing local GoogleService-Info.plist: {ex.Message}");
+                    }
+                }
+            }
+
+            if (doc != null)
             {
                 try
                 {
-                    var doc = XDocument.Load(plistPath);
                     var dict = doc.Element("plist")?.Element("dict");
                     if (dict != null)
                     {
@@ -91,17 +126,17 @@ namespace SnapPickWin.Services
                             }
                         }
                         Config = config;
-                        Console.WriteLine($"🔑 FirebaseService: Config loaded from plist. Project ID: {Config.ProjectId}");
+                        Console.WriteLine($"🔑 FirebaseService: Project ID: {Config.ProjectId}");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"❌ FirebaseService: Error parsing GoogleService-Info.plist: {ex.Message}");
+                    Console.WriteLine($"❌ FirebaseService: Error parsing plist XML dictionary: {ex.Message}");
                 }
             }
             else
             {
-                Console.WriteLine("🔑 FirebaseService: GoogleService-Info.plist not found. Please place it in the application folder.");
+                Console.WriteLine("🔑 FirebaseService: GoogleService-Info.plist config not found (either embedded or in filesystem).");
             }
         }
 
