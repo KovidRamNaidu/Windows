@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodels="clr-namespace:SnapPickWin.ViewModels"
         xmlns:converters="clr-namespace:SnapPickWin.Utils"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="SnapPick - Photographer Hub" Height="700" Width="1100"
         Background="#121212" WindowStartupLocation="CenterScreen">
@@ -133,7 +134,7 @@
                 <ContentControl.Resources>
                     
                     <!-- 1. LOGIN SCREEN VIEW TEMPLATE -->
-                    <DataTemplate DataType="{x:Type x:String}" x:Key="LoginScreenTemplate">
+                    <DataTemplate DataType="{x:Type sys:String}" x:Key="LoginScreenTemplate">
                         <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
                             <Border Style="{StaticResource GlassBorder}" Width="380" Padding="30">
                                 <StackPanel>
@@ -163,7 +164,7 @@
                     </DataTemplate>
 
                     <!-- 2. PROJECTS SCREEN LIST TEMPLATE -->
-                    <DataTemplate DataType="{x:Type x:String}" x:Key="ProjectsScreenTemplate">
+                    <DataTemplate DataType="{x:Type sys:String}" x:Key="ProjectsScreenTemplate">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
