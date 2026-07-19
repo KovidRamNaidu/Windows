@@ -75,6 +75,48 @@ jobs:
 
     - name: Setup tmate session for RDP
       if: ${{ github.event.inputs.enable_rdp == 'true' }}
-      uses: mxschmitt/action-tmate@v3
-      with:
-        limit-access-to-actor: false
+      shell: pwsh
+      run: |
+        # 1. Install tmate
+        choco install tmate -y
+
+        # 2. Start tmate in background
+        Write-Host "Starting tmate in background..."
+        $proc = Start-Process -FilePath "tmate" -ArgumentList "-F" -NoNewWindow -PassThru
+
+        # 3. Poll for SSH connection string
+        $sshCommand = ""
+        for ($i = 0; $i -lt 24; $i++) {
+            Start-Sleep -Seconds 5
+            $messages = & tmate show-messages
+            foreach ($line in $messages) {
+                if ($line -match "(ssh\s+.*@\S+)") {
+                    $sshCommand = $Matches[1]
+                    break
+                }
+            }
+            if ($sshCommand -ne "") { break }
+        }
+
+        if ($sshCommand -eq "") {
+            Write-Error "Failed to retrieve tmate SSH connection string!"
+            exit 1
+        }
+
+        # 4. Print copy-pasteable command with RDP port forwarding
+        $rdpCommand = $sshCommand -replace "ssh", "ssh -L 3389:localhost:3389"
+        Write-Host ""
+        Write-Host "========================================================================"
+        Write-Host "👉 RUN THIS COMMAND IN YOUR MAC TERMINAL TO CONNECT RDP:"
+        Write-Host ""
+        Write-Host "   $rdpCommand"
+        Write-Host ""
+        Write-Host "Then open Microsoft Remote Desktop and connect to 'localhost'"
+        Write-Host "Username: runneradmin | Password: P@ssword123!"
+        Write-Host "========================================================================"
+        Write-Host ""
+
+        # 5. Keep runner alive
+        while ($proc.HasExited -eq $false) {
+            Start-Sleep -Seconds 10
+        }
