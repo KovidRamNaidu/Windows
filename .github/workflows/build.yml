@@ -1,0 +1,34 @@
+name: Build Windows Executable
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch: # Allows manual trigger from the GitHub UI
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore Dependencies
+      run: dotnet restore SnapPickWin.csproj
+
+    - name: Build and Publish Single-File Executable
+      run: |
+        dotnet publish SnapPickWin.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
+
+    - name: Upload Compiled Executable Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: SnapPickWin-Executable
+        path: publish/SnapPickWin.exe
