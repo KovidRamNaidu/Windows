@@ -116,7 +116,7 @@
                 </StackPanel>
 
                 <!-- Sidebar Buttons -->
-                <StackPanel Grid.Row="1" Spacing="10" VerticalAlignment="Top">
+                <StackPanel Grid.Row="1" VerticalAlignment="Top">
                     <Button Content="My Projects" Background="Transparent" Foreground="#FFFFFF" FontSize="14" HorizontalAlignment="Left" Margin="0,5" Command="{Binding NavigateToProjectsCommand}" Visibility="{Binding IsAuthenticated, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     <TextBlock Text="Logged in as:" Foreground="#888899" FontSize="11" Margin="0,15,0,5" Visibility="{Binding IsAuthenticated, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     <TextBlock Text="{Binding UserEmail}" Foreground="#FFFFFF" FontSize="12" TextTrimming="CharacterEllipsis" Visibility="{Binding IsAuthenticated, Converter={StaticResource BooleanToVisibilityConverter}}"/>
@@ -136,16 +136,16 @@
                     <DataTemplate DataType="{x:Type x:String}" x:Key="LoginScreenTemplate">
                         <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
                             <Border Style="{StaticResource GlassBorder}" Width="380" Padding="30">
-                                <StackPanel Spacing="20">
-                                    <TextBlock Text="Welcome Partner" FontSize="24" FontWeight="Bold" Foreground="#FFFFFF" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                                <StackPanel>
+                                    <TextBlock Text="Welcome Partner" FontSize="24" FontWeight="Bold" Foreground="#FFFFFF" HorizontalAlignment="Center" Margin="0,0,0,20"/>
                                     
-                                    <StackPanel Spacing="5">
-                                        <TextBlock Text="Email Address" Foreground="#AAAAAA" FontSize="12"/>
+                                    <StackPanel Margin="0,0,0,15">
+                                        <TextBlock Text="Email Address" Foreground="#AAAAAA" FontSize="12" Margin="0,0,0,5"/>
                                         <TextBox x:Name="EmailInput" Text="siri@snappick.com"/>
                                     </StackPanel>
                                     
-                                    <StackPanel Spacing="5">
-                                        <TextBlock Text="Password" Foreground="#AAAAAA" FontSize="12"/>
+                                    <StackPanel Margin="0,0,0,20">
+                                        <TextBlock Text="Password" Foreground="#AAAAAA" FontSize="12" Margin="0,0,0,5"/>
                                         <PasswordBox x:Name="PasswordInput"/>
                                     </StackPanel>
                                     
@@ -190,15 +190,15 @@
                                                         <ColumnDefinition Width="*"/>
                                                         <ColumnDefinition Width="Auto"/>
                                                     </Grid.ColumnDefinitions>
-                                                    <StackPanel Grid.Column="0" Spacing="5" VerticalAlignment="Center">
-                                                        <TextBlock Text="{Binding Title}" FontSize="18" FontWeight="Bold" Foreground="#FFFFFF"/>
-                                                        <StackPanel Orientation="Horizontal" Spacing="15">
-                                                            <TextBlock Text="{Binding Status}" Foreground="#00FFCC" FontWeight="SemiBold" FontSize="11"/>
+                                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding Title}" FontSize="18" FontWeight="Bold" Foreground="#FFFFFF" Margin="0,0,0,5"/>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding Status}" Foreground="#00FFCC" FontWeight="SemiBold" FontSize="11" Margin="0,0,15,0"/>
                                                             <TextBlock Text="{Binding CreatedAt, StringFormat='Created: {0:g}'}" Foreground="#888888" FontSize="11"/>
                                                         </StackPanel>
                                                     </StackPanel>
-                                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                                                        <Button Content="Open Space" Background="#3A3A55" Click="OnOpenProjectClick"/>
+                                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                        <Button Content="Open Space" Background="#3A3A55" Click="OnOpenProjectClick" Margin="0,0,10,0"/>
                                                         <Button Content="Delete" Background="#C62828" Click="OnDeleteProjectClick"/>
                                                     </StackPanel>
                                                 </Grid>
@@ -230,9 +230,9 @@
                                     <TextBlock Text="{Binding Title}" FontSize="24" FontWeight="Bold" Foreground="#FFFFFF"/>
                                     <TextBlock Text="{Binding Status, StringFormat='Status: {0}'}" Foreground="#00FFFF" FontSize="12"/>
                                 </StackPanel>
-                                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                                    <Button Content="Import Photos" Command="{Binding ImportPhotosCommand}" Click="OnImportFolderClick" Visibility="{Binding CanImport, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                                    <Button Content="Upload &amp; Activate" Command="{Binding StartUploadPipelineCommand}" Background="#00CC88" Visibility="{Binding CanUpload, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Button Content="Import Photos" Command="{Binding ImportPhotosCommand}" Click="OnImportFolderClick" Visibility="{Binding CanImport, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,0,10,0"/>
+                                    <Button Content="Upload &amp; Activate" Command="{Binding StartUploadPipelineCommand}" Background="#00CC88" Visibility="{Binding CanUpload, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,0,10,0"/>
                                     <Button Content="Cancel" Command="{Binding CancelUploadCommand}" Background="#C62828" Visibility="{Binding IsUploading, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                                 </StackPanel>
                             </Grid>
@@ -255,7 +255,7 @@
                                         <ListBox Grid.Row="1" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}" Background="Transparent" BorderThickness="0" Foreground="#FFFFFF">
                                             <ListBox.ItemTemplate>
                                                 <DataTemplate>
-                                                    <StackPanel Orientation="Horizontal" Padding="5,8">
+                                                    <StackPanel Orientation="Horizontal" Margin="5,8">
                                                         <TextBlock Text="{Binding Name}" FontWeight="Medium" FontSize="13"/>
                                                         <TextBlock Text="{Binding PhotoCount, StringFormat=' ({0})'}" Foreground="#888888" FontSize="11" VerticalAlignment="Center"/>
                                                     </StackPanel>
@@ -302,8 +302,8 @@
                                     <Border Grid.Row="1" Background="#161622" CornerRadius="12" Padding="20" Margin="0,15,0,0" BorderBrush="#22222E" BorderThickness="1">
                                         <Grid>
                                             <!-- Upload Status Pipeline -->
-                                            <StackPanel Visibility="{Binding IsUploading, Converter={StaticResource BooleanToVisibilityConverter}}" Spacing="10">
-                                                <TextBlock Text="{Binding UploadStatusText}" Foreground="#FFFFFF" FontWeight="Medium"/>
+                                            <StackPanel Visibility="{Binding IsUploading, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                <TextBlock Text="{Binding UploadStatusText}" Foreground="#FFFFFF" FontWeight="Medium" Margin="0,0,0,10"/>
                                                 <ProgressBar Value="{Binding UploadProgress}" Height="8" Background="#222222" Foreground="#8A2BE2"/>
                                             </StackPanel>
 
@@ -314,25 +314,25 @@
                                                     <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
                                                 
-                                                <StackPanel Grid.Column="0" Spacing="8">
+                                                <StackPanel Grid.Column="0">
                                                     <!-- Share token links -->
-                                                    <StackPanel Orientation="Horizontal" Visibility="{Binding ShareLink, Converter={StaticResource StringNotEmptyToVisibilityConverter}}">
+                                                    <StackPanel Orientation="Horizontal" Visibility="{Binding ShareLink, Converter={StaticResource StringNotEmptyToVisibilityConverter}}" Margin="0,0,0,8">
                                                         <TextBlock Text="Client Link: " Foreground="#888899" FontSize="12" VerticalAlignment="Center"/>
                                                         <TextBox Text="{Binding ShareLink, Mode=OneWay}" IsReadOnly="True" Background="#252535" BorderBrush="Transparent" Foreground="#00FFCC" Padding="5" Width="300" VerticalAlignment="Center"/>
                                                     </StackPanel>
                                                     
                                                     <!-- Sync dashboard info -->
                                                     <TextBlock Text="Waiting for client selections..." Foreground="#888888" FontSize="12" Visibility="{Binding Project.Selection, Converter={StaticResource NullToVisibilityConverter}}"/>
-                                                    <StackPanel Visibility="{Binding Project.Selection, Converter={StaticResource NotNullToVisibilityConverter}}" Spacing="5">
-                                                        <TextBlock Text="✓ Selection received from client!" Foreground="#00FFCC" FontWeight="Bold" FontSize="13"/>
-                                                        <TextBlock Text="{Binding Project.Selection.SubmittedAt, StringFormat='Submitted: {0}'}" Foreground="#888888" FontSize="11"/>
+                                                    <StackPanel Visibility="{Binding Project.Selection, Converter={StaticResource NotNullToVisibilityConverter}}">
+                                                        <TextBlock Text="✓ Selection received from client!" Foreground="#00FFCC" FontWeight="Bold" FontSize="13" Margin="0,0,0,5"/>
+                                                        <TextBlock Text="{Binding Project.Selection.SubmittedAt, StringFormat='Submitted: {0}'}" Foreground="#888888" FontSize="11" Margin="0,0,0,5"/>
                                                         <TextBlock Text="{Binding Project.Selection.RecheckCount, StringFormat='Recheck Counter: {0}'}" Foreground="#FFCC00" FontSize="11"/>
                                                     </StackPanel>
                                                 </StackPanel>
 
-                                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Bottom">
-                                                    <Button Content="Sync Dashboard" Command="{Binding FetchSelectionsCommand}" Background="#5E35B1" Visibility="{Binding ShareLink, Converter={StaticResource StringNotEmptyToVisibilityConverter}}"/>
-                                                    <Button Content="Reset Selections" Click="OnResetSelectionsDialogClick" Background="#EF6C00" Visibility="{Binding ShareLink, Converter={StaticResource StringNotEmptyToVisibilityConverter}}"/>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+                                                    <Button Content="Sync Dashboard" Command="{Binding FetchSelectionsCommand}" Background="#5E35B1" Visibility="{Binding ShareLink, Converter={StaticResource StringNotEmptyToVisibilityConverter}}" Margin="0,0,10,0"/>
+                                                    <Button Content="Reset Selections" Click="OnResetSelectionsDialogClick" Background="#EF6C00" Visibility="{Binding ShareLink, Converter={StaticResource StringNotEmptyToVisibilityConverter}}" Margin="0,0,10,0"/>
                                                     <Button Content="Export Selected Photos" Click="OnExportSelectedClick" Background="#00838F" Visibility="{Binding Project.Selection, Converter={StaticResource NotNullToVisibilityConverter}}"/>
                                                 </StackPanel>
                                             </Grid>
