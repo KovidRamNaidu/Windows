@@ -51,8 +51,8 @@ namespace SnapPickWin.ViewModels
             }
         }
 
-        public ICommand LoginCommand { get; }
-        public ICommand RegisterCommand { get; }
+        public IAsyncRelayCommand LoginCommand { get; }
+        public IAsyncRelayCommand RegisterCommand { get; }
         public ICommand LogoutCommand { get; }
         public ICommand CreateProjectCommand { get; }
         public ICommand DeleteProjectCommand { get; }

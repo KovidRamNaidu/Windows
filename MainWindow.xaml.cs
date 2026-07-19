@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
+using CommunityToolkit.Mvvm.Input;
 using SnapPickWin.Models;
 using SnapPickWin.ViewModels;
 using SnapPickWin.Services;
@@ -42,7 +43,7 @@ namespace SnapPickWin
 
             if (string.IsNullOrEmpty(emailText) || string.IsNullOrEmpty(passwordText))
             {
-                MessageBox.Show("Please enter email and password.", "Login", MessageBoxButton.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please enter email and password.", "Login", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -52,7 +53,7 @@ namespace SnapPickWin
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Login Failed", MessageBoxButton.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Login Failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -71,7 +72,7 @@ namespace SnapPickWin
 
             if (string.IsNullOrEmpty(emailText) || string.IsNullOrEmpty(passwordText))
             {
-                MessageBox.Show("Please enter email and password.", "Registration", MessageBoxButton.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please enter email and password.", "Registration", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -81,7 +82,7 @@ namespace SnapPickWin
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Registration Failed", MessageBoxButton.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Registration Failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

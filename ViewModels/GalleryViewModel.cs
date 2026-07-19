@@ -93,11 +93,11 @@ namespace SnapPickWin.ViewModels
         public ObservableCollection<PhotoCategory> Categories { get; } = new();
 
         public ICommand ImportPhotosCommand { get; }
-        public ICommand StartUploadPipelineCommand { get; }
+        public IAsyncRelayCommand StartUploadPipelineCommand { get; }
         public ICommand CancelUploadCommand { get; }
-        public ICommand FetchSelectionsCommand { get; }
-        public ICommand ResetSelectionsCommand { get; }
-        public ICommand ExportSelectedPhotosCommand { get; }
+        public IAsyncRelayCommand FetchSelectionsCommand { get; }
+        public IAsyncRelayCommand ResetSelectionsCommand { get; }
+        public IAsyncRelayCommand ExportSelectedPhotosCommand { get; }
         public ICommand NavigateBackCommand { get; }
 
         public GalleryViewModel(
