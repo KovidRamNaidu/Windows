@@ -27,6 +27,32 @@ jobs:
       run: |
         dotnet publish SnapPickWin.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
 
+    - name: Run Headless Assembly Verification
+      shell: pwsh
+      run: |
+        $dll = Get-ChildItem -Path . -Recurse -Filter SnapPickWin.dll | Select-Object -First 1
+        if ($dll -ne $null) {
+            $dllPath = $dll.FullName
+            Write-Host "Loading assembly: $dllPath"
+            $assembly = [System.Reflection.Assembly]::LoadFrom($dllPath)
+            $type = $assembly.GetType("SnapPickWin.Services.FirebaseService")
+            if ($type -eq $null) {
+                Write-Error "Failed to locate SnapPickWin.Services.FirebaseService type!"
+                exit 1
+            }
+            $instance = [System.Activator]::CreateInstance($type)
+            $configProp = $type.GetProperty("Config")
+            $config = $configProp.GetValue($instance)
+            if ($config -eq $null -or [string]::IsNullOrEmpty($config.ApiKey)) {
+                Write-Error "Headless Verification Failed: Firebase configuration is null or API Key is missing!"
+                exit 1
+            }
+            Write-Host "Success: Embedded GoogleService-Info.plist loaded and parsed correctly on runner! Project ID: $($config.ProjectId)"
+        } else {
+            Write-Error "SnapPickWin.dll assembly file not found!"
+            exit 1
+        }
+
     - name: Upload Compiled Executable Artifact
       uses: actions/upload-artifact@v4
       with:
